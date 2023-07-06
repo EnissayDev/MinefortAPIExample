@@ -15,7 +15,7 @@ public class Main {
     public static String BASE_URL = "https://api.minefort.com/v1";
     public static String EMAIL = null;
     public static String PASSWORD = null;
-    public static String COOKIE = "";
+    public static String COOKIE = null;
 
     public static void main(String[] args) {
         //FETCH SERVERS

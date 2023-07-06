@@ -22,27 +22,30 @@ public class ServerManager {
         jsObject.put("serverName", name);
 
         AtomicReference<Boolean> responseServer = new AtomicReference<>(false);
-        try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI(Main.BASE_URL + "/server/availability"))
-                    .headers("Content-Type", "application/json", "Cookie", Main.COOKIE)
-                    .POST(HttpRequest.BodyPublishers.ofString(jsObject.toString()))
-                    .build();
 
-            HttpClient client = HttpClient.newHttpClient();
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            switch (response.statusCode()) {
-                case 200:
-                    JSONObject result = new JSONObject(response.body());
-                    responseServer.set(result.getBoolean("result"));
-                    break;
+        if (Main.COOKIE != null) {
+            try {
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(new URI(Main.BASE_URL + "/server/availability"))
+                        .headers("Content-Type", "application/json", "Cookie", Main.COOKIE)
+                        .POST(HttpRequest.BodyPublishers.ofString(jsObject.toString()))
+                        .build();
+
+                HttpClient client = HttpClient.newHttpClient();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                switch (response.statusCode()) {
+                    case 200:
+                        JSONObject result = new JSONObject(response.body());
+                        responseServer.set(result.getBoolean("result"));
+                        break;
+                }
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
         }
         return responseServer.get();
     }
